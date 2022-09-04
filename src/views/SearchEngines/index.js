@@ -14,6 +14,7 @@ import {
 } from "@mui/material"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
+import DetailsIcon from "@mui/icons-material/Details"
 import { searchEnginesDelete, searchEnginesGetMany } from "../../api/searchengines"
 import { useSnackbar } from "notistack"
 import { useNavigate } from "react-router-dom"
@@ -42,6 +43,10 @@ const SearchEngines = () => {
   }
 
   function handleEdit(id) {
+    navigate(`/searchEngines/${id}/edit`)
+  }
+
+  function handleDetails(id) {
     navigate(`/searchEngines/${id}`)
   }
 
@@ -80,6 +85,9 @@ const SearchEngines = () => {
                     </IconButton>
                     <IconButton data-testid="delete" onClick={() => handleDelete(searchEngine.id)}>
                       <DeleteIcon />
+                    </IconButton>
+                    <IconButton data-testid="details" onClick={() => handleDetails(searchEngine.id)}>
+                      <DetailsIcon />
                     </IconButton>
                   </Grid>
                 </TableCell>

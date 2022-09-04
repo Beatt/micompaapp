@@ -64,6 +64,16 @@ describe("SearchEngines", function () {
       fireEvent.click(screen.getByTestId("edit"))
     })
 
+    expect(window.location.href).toEqual(expect.stringMatching(`searchEngines/1/edit`))
+  })
+
+  it("show código postal", async () => {
+    await createWrapper()
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId("details"))
+    })
+
     expect(window.location.href).toEqual(expect.stringMatching(`searchEngines/1`))
   })
 })

@@ -6,12 +6,12 @@ export const searchEnginesGetOne = () =>
   Promise.resolve({
     data: {
       id: "12310321",
-      user: "Gabriel",
       cp: "14030",
       municipioalcaldia: "Tlalpan",
       estado: "Ciudad de México",
       street: "3 poniente 19 7",
       suburb: "Isidro fabela",
+      country: "México",
     },
   })
 
@@ -20,7 +20,6 @@ export const searchEnginesGetMany = () =>
     data: [
       {
         id: "12310321",
-        user: "Gabriel",
         cp: "14030",
         municipioalcaldia: "Tlalpan",
         estado: "Ciudad de México",
