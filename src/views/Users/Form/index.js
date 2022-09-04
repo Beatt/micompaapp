@@ -6,21 +6,21 @@ import { useSnackbar } from "notistack"
 
 const { useState, useEffect } = React
 
-const UsersForm = ({ direccionByCP, usersSave, coloniasByCP }) => {
+const UsersForm = ({ direccionByCP, usersSave, coloniasByCP, initValues }) => {
   const { enqueueSnackbar } = useSnackbar()
-  const [showInfo, setShowInfo] = useState(false)
+  const [showInfo, setShowInfo] = useState(initValues !== undefined)
   const [colonias, setColonias] = useState([])
   const formik = useFormik({
     initialValues: {
-      cp: "",
-      municipioalcaldia: "",
-      estado: "",
-      pais: "",
-      street: "",
-      interiorNumber: "",
-      outdoorNumber: "",
-      suburb: "",
-      city: "",
+      cp: initValues?.cp ?? "",
+      municipioalcaldia: initValues?.municipioalcaldia ?? "",
+      estado: initValues?.estado ?? "",
+      pais: initValues?.pais ?? "",
+      street: initValues?.street ?? "",
+      interiorNumber: initValues?.interiorNumber ?? "",
+      outdoorNumber: initValues?.outdoorNumber ?? "",
+      suburb: initValues?.suburb ?? "",
+      city: initValues?.city ?? "",
     },
     validationSchema: validationSchema,
     onSubmit: handleSubmit,

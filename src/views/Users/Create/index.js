@@ -4,11 +4,7 @@ import { direccionByCP, coloniasByCP } from "../../../api/searchengines"
 import { usersCreate } from "../../../api/users"
 
 const UsersCreate = () => {
-  return (
-    <div>
-      <UsersForm {...{ usersSave: usersCreate, direccionByCP, coloniasByCP }} />
-    </div>
-  )
+  return <UsersForm {...{ usersSave: usersCreate, direccionByCP, coloniasByCP }} />
 }
 
 export default UsersCreate

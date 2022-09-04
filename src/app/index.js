@@ -3,7 +3,8 @@ import { Route, Routes } from "react-router-dom"
 import Home from "../views/Home"
 import NavBar from "./NavBar"
 import { Grid } from "@mui/material"
-import UsersCreate from "../views/Users/Create"
+import Users from "../views/Users"
+import UsersEdit from "../views/Users/Edit"
 
 function App() {
   return (
@@ -15,7 +16,8 @@ function App() {
           <Grid item sm={12}>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/users/create" element={<UsersCreate />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/users/:id" element={<UsersEdit />} />
             </Routes>
           </Grid>
         </Grid>
