@@ -1,14 +1,15 @@
 import * as React from "react"
-import { Button, Grid, TextField } from "@mui/material"
+import { Button, Grid, MenuItem, TextField } from "@mui/material"
 import { useFormik } from "formik"
 import { validationSchema } from "./validationSchema"
 import { useSnackbar } from "notistack"
 
-const { useState } = React
+const { useState, useEffect } = React
 
-const UsersForm = ({ addressGet, usersSave }) => {
+const UsersForm = ({ direccionByCP, usersSave, coloniasByCP }) => {
   const { enqueueSnackbar } = useSnackbar()
   const [showInfo, setShowInfo] = useState(false)
+  const [colonias, setColonias] = useState([])
   const formik = useFormik({
     initialValues: {
       cp: "",
@@ -26,11 +27,21 @@ const UsersForm = ({ addressGet, usersSave }) => {
   })
   const [foundCP, setFoundCP] = useState(false)
 
+  useEffect(() => {
+    if (foundCP) {
+      coloniasByCP(formik.values.cp).then(({ data }) => setColonias(data))
+    }
+  }, [foundCP])
+
   async function handleSubmit(values) {
-    await usersSave({
-      ...values,
-    })
-    enqueueSnackbar("Todo ok", { variant: "success" })
+    try {
+      await usersSave({
+        ...values,
+      })
+      enqueueSnackbar("¡Se ha guardado correctamente tu dirección!", { variant: "success" })
+    } catch {
+      enqueueSnackbar("¡Lo sentimos, ha ocurrido un error al guardar tu dirección!", { variant: "error" })
+    }
   }
 
   async function getAddressByCp() {
@@ -38,7 +49,7 @@ const UsersForm = ({ addressGet, usersSave }) => {
       await formik.submitForm()
     } else {
       try {
-        const { data } = await addressGet(formik.values.cp)
+        const { data } = await direccionByCP(formik.values.cp)
         formik.setValues({
           ...formik.values,
           municipioalcaldia: data.municipioalcaldia,
@@ -54,6 +65,46 @@ const UsersForm = ({ addressGet, usersSave }) => {
       } finally {
         setShowInfo(true)
       }
+    }
+  }
+
+  function renderColoniaField() {
+    const coloniaProps = {
+      id: "suburb",
+      label: "Colonia",
+      value: formik.values.suburb,
+      onChange: formik.handleChange,
+      error: formik.touched.suburb && Boolean(formik.errors.suburb),
+      helperText: formik.touched.suburb && formik.errors.suburb,
+      fullWidth: true,
+      margin: "normal",
+    }
+
+    if (colonias.length === 0) {
+      return (
+        <TextField
+          id="suburb"
+          label="Colonia"
+          data-testid="suburb"
+          value={formik.values.suburb}
+          onChange={formik.handleChange}
+          error={formik.touched.suburb && Boolean(formik.errors.suburb)}
+          helperText={formik.touched.suburb && formik.errors.suburb}
+          fullWidth
+          margin={"normal"}
+        />
+      )
+    } else {
+      return (
+        <TextField name="suburb" {...coloniaProps} data-testid="suburb" select>
+          <MenuItem value="">Selecciona una opción</MenuItem>
+          {colonias.map((colonia, index) => (
+            <MenuItem key={index} value={colonia}>
+              {colonia}
+            </MenuItem>
+          ))}
+        </TextField>
+      )
     }
   }
 
@@ -136,17 +187,7 @@ const UsersForm = ({ addressGet, usersSave }) => {
               />
             </Grid>
             <Grid item sm={6}>
-              <TextField
-                id="suburb"
-                label="Colonia"
-                data-testid="suburb"
-                value={formik.values.suburb}
-                onChange={formik.handleChange}
-                error={formik.touched.suburb && Boolean(formik.errors.suburb)}
-                helperText={formik.touched.suburb && formik.errors.suburb}
-                fullWidth
-                margin={"normal"}
-              />
+              {renderColoniaField()}
             </Grid>
           </Grid>
           <Grid container>
