@@ -1,25 +1,25 @@
 import * as React from "react"
 import { render, screen } from "@testing-library/react"
-import UsersForm from "./index"
-import { direccionByCP, coloniasByCP } from "../../../api/searchengines"
+import SearchEnginesForm from "./index"
+import { catalogsDireccionByCP, catalogsColoniasByCP } from "../../../api/catalogs"
 import { SnackbarProvider } from "notistack"
-import UsersFormPage from "../../../../tests/pageobjects/UsersFormPage"
+import SearchEnginesFormPage from "../../../../tests/pageobjects/SearchEnginesFormPage"
 
-describe("UsersForm", function () {
+describe("SearchEnginesForm", function () {
   let props = {
-    direccionByCP,
-    coloniasByCP,
-    usersSave: jest.fn(),
+    catalogsDireccionByCP,
+    catalogsColoniasByCP,
+    searchEnginesSave: jest.fn(),
     initValues: undefined,
   }
 
   let createWrapper
   beforeEach(() => {
-    jest.spyOn(props, "coloniasByCP").mockResolvedValue({
+    jest.spyOn(props, "catalogsColoniasByCP").mockResolvedValue({
       data: ["Minerva", "Granjas Esmeralda", "Los Cipreses", "Progreso del Sur"],
     })
 
-    jest.spyOn(props, "direccionByCP").mockResolvedValue({
+    jest.spyOn(props, "catalogsDireccionByCP").mockResolvedValue({
       data: {
         municipioalcaldia: "Tlalpan",
         estado: "Ciudad de México",
@@ -31,25 +31,25 @@ describe("UsersForm", function () {
     createWrapper = () =>
       render(
         <SnackbarProvider>
-          <UsersForm {...props} />
+          <SearchEnginesForm {...props} />
         </SnackbarProvider>
       )
   })
 
-  it("create user when cp was found", async () => {
+  it("create código postal when cp was found", async () => {
     createWrapper()
 
-    UsersFormPage.fillCP("14030")
-    await UsersFormPage.searchMyAddress()
+    SearchEnginesFormPage.fillCP("14030")
+    await SearchEnginesFormPage.searchMyAddress()
 
-    UsersFormPage.fillStreet("3a poniente 19")
-    UsersFormPage.fillInteriorNumber("7")
-    UsersFormPage.fillOutdoorNumber("18")
-    UsersFormPage.fillSuburb("Los Cipreses")
+    SearchEnginesFormPage.fillStreet("3a poniente 19")
+    SearchEnginesFormPage.fillInteriorNumber("7")
+    SearchEnginesFormPage.fillOutdoorNumber("18")
+    SearchEnginesFormPage.fillSuburb("Los Cipreses")
 
-    await UsersFormPage.submit()
+    await SearchEnginesFormPage.submit()
 
-    expect(props.usersSave).toBeCalledWith({
+    expect(props.searchEnginesSave).toBeCalledWith({
       cp: "14030",
       municipioalcaldia: "Tlalpan",
       estado: "Ciudad de México",
@@ -67,26 +67,26 @@ describe("UsersForm", function () {
     expect(document.body.textContent).toEqual(expect.stringMatching("¡Se ha guardado correctamente tu dirección!"))
   })
 
-  it("create user when cp was not found", async () => {
-    jest.spyOn(props, "direccionByCP").mockRejectedValue({})
+  it("create código postal when cp was not found", async () => {
+    jest.spyOn(props, "catalogsDireccionByCP").mockRejectedValue({})
 
     createWrapper()
 
-    UsersFormPage.fillCP("14030")
-    await UsersFormPage.searchMyAddress()
+    SearchEnginesFormPage.fillCP("14030")
+    await SearchEnginesFormPage.searchMyAddress()
 
-    UsersFormPage.fillStreet("3a poniente 19")
-    UsersFormPage.fillInteriorNumber("7")
-    UsersFormPage.fillOutdoorNumber("18")
-    UsersFormPage.fillSuburb("Mi colonia")
-    UsersFormPage.fillCity("CDMX")
-    UsersFormPage.fillCountry("México")
-    UsersFormPage.fillEstado("Ciudad de México")
-    UsersFormPage.fillMunicipioAlcaldia("Tlalpan")
+    SearchEnginesFormPage.fillStreet("3a poniente 19")
+    SearchEnginesFormPage.fillInteriorNumber("7")
+    SearchEnginesFormPage.fillOutdoorNumber("18")
+    SearchEnginesFormPage.fillSuburb("Mi colonia")
+    SearchEnginesFormPage.fillCity("CDMX")
+    SearchEnginesFormPage.fillCountry("México")
+    SearchEnginesFormPage.fillEstado("Ciudad de México")
+    SearchEnginesFormPage.fillMunicipioAlcaldia("Tlalpan")
 
-    await UsersFormPage.submit()
+    await SearchEnginesFormPage.submit()
 
-    expect(props.usersSave).toBeCalledWith({
+    expect(props.searchEnginesSave).toBeCalledWith({
       cp: "14030",
       municipioalcaldia: "Tlalpan",
       estado: "Ciudad de México",
@@ -104,21 +104,21 @@ describe("UsersForm", function () {
     expect(document.body.textContent).toEqual(expect.stringMatching("¡Se ha guardado correctamente tu dirección!"))
   })
 
-  it("show error message when create user fail", async () => {
-    jest.spyOn(props, "usersSave").mockRejectedValue()
+  it("show error message when create código postal fail", async () => {
+    jest.spyOn(props, "searchEnginesSave").mockRejectedValue()
 
     createWrapper()
 
-    await UsersFormPage.fillRandomUser()
+    await SearchEnginesFormPage.fillRandomUser()
 
-    await UsersFormPage.submit()
+    await SearchEnginesFormPage.submit()
 
     expect(document.body.textContent).toEqual(
       expect.stringMatching("¡Lo sentimos, ha ocurrido un error al guardar tu dirección!")
     )
   })
 
-  it("edit user", async () => {
+  it("edit código postal", async () => {
     props.initValues = {
       cp: "14030",
       street: "3a poniente 19",
@@ -129,14 +129,14 @@ describe("UsersForm", function () {
 
     createWrapper()
 
-    UsersFormPage.fillCP("14030")
-    await UsersFormPage.searchMyAddress()
+    SearchEnginesFormPage.fillCP("14030")
+    await SearchEnginesFormPage.searchMyAddress()
 
-    UsersFormPage.fillStreet("6a poniente 20")
+    SearchEnginesFormPage.fillStreet("6a poniente 20")
 
-    await UsersFormPage.submit()
+    await SearchEnginesFormPage.submit()
 
-    expect(props.usersSave).toBeCalledWith({
+    expect(props.searchEnginesSave).toBeCalledWith({
       municipioalcaldia: "Tlalpan",
       estado: "Ciudad de México",
       pais: "México",

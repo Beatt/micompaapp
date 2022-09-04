@@ -1,20 +1,20 @@
 import * as React from "react"
-import UsersForm from "../Form"
-import { direccionByCP, coloniasByCP } from "../../../api/searchengines"
-import { usersGetOne, usersUpdate } from "../../../api/users"
+import SearchEnginesForm from "../Form"
+import { searchEnginesGetOne, searchEnginesUpdate } from "../../../api/searchengines"
+import { catalogsDireccionByCP, catalogsColoniasByCP } from "../../../api/catalogs"
 import { Box, Typography } from "@mui/material"
 import { useSearchParams } from "react-router-dom"
 
 const { useState, useEffect } = React
 
-const UsersEdit = () => {
+const SearchEnginesEdit = () => {
   const [searchParams] = useSearchParams()
   const id = searchParams.get("id")
 
   const [initValues, setInitialValues] = useState(null)
 
   useEffect(() => {
-    usersGetOne({ id }).then(({ data }) => {
+    searchEnginesGetOne({ id }).then(({ data }) => {
       setInitialValues(data)
     })
   }, [])
@@ -27,9 +27,13 @@ const UsersEdit = () => {
           Gracias a ti vamos a mantener nuestra API actualizada, no lo olvides eres parte de esto.
         </Typography>
       </Box>
-      {initValues && <UsersForm {...{ usersSave: usersUpdate, direccionByCP, coloniasByCP, initValues }} />}
+      {initValues && (
+        <SearchEnginesForm
+          {...{ searchEnginesSave: searchEnginesUpdate, catalogsDireccionByCP, catalogsColoniasByCP, initValues }}
+        />
+      )}
     </Box>
   )
 }
 
-export default UsersEdit
+export default SearchEnginesEdit

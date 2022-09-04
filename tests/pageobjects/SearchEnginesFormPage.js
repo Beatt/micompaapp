@@ -1,8 +1,8 @@
 import { act } from "react-dom/test-utils"
 import { fireEvent, screen } from "@testing-library/react"
-import users from "../factories/users"
+import searchEngines from "../factories/searchEngines"
 
-class UsersFormPage {
+class SearchEnginesFormPage {
   static fillCP(value) {
     fireEvent.change(screen.getByTestId("cp").querySelector("input"), { target: { value } })
   }
@@ -52,16 +52,16 @@ class UsersFormPage {
   }
 
   static async fillRandomUser() {
-    const user = users.build()
+    const searchEngine = searchEngines.build()
 
-    UsersFormPage.fillCP(user.cp)
-    await UsersFormPage.searchMyAddress()
+    SearchEnginesFormPage.fillCP(searchEngine.cp)
+    await SearchEnginesFormPage.searchMyAddress()
 
-    UsersFormPage.fillStreet(user.street)
-    UsersFormPage.fillInteriorNumber(user.interiorNumber)
-    UsersFormPage.fillOutdoorNumber(user.outdoorNumber)
-    UsersFormPage.fillSuburb(user.suburb)
+    SearchEnginesFormPage.fillStreet(searchEngine.street)
+    SearchEnginesFormPage.fillInteriorNumber(searchEngine.interiorNumber)
+    SearchEnginesFormPage.fillOutdoorNumber(searchEngine.outdoorNumber)
+    SearchEnginesFormPage.fillSuburb(searchEngine.suburb)
   }
 }
 
-export default UsersFormPage
+export default SearchEnginesFormPage

@@ -14,35 +14,35 @@ import {
 } from "@mui/material"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
-import { usersDelete, usersGetMany } from "../../api/users"
+import { searchEnginesDelete, searchEnginesGetMany } from "../../api/searchengines"
 import { useSnackbar } from "notistack"
 import { useNavigate } from "react-router-dom"
 
 const { useState, useEffect } = React
 
-const Users = () => {
+const SearchEngines = () => {
   const { enqueueSnackbar } = useSnackbar()
   const navigate = useNavigate()
-  const [users, setUsers] = useState([])
+  const [searchEngines, setSearchEngines] = useState([])
 
   useEffect(() => {
     handleUsersGet()
   }, [])
 
   function handleUsersGet() {
-    usersGetMany().then(({ data }) => {
-      setUsers(data)
+    searchEnginesGetMany().then(({ data }) => {
+      setSearchEngines(data)
     })
   }
 
   async function handleDelete(id) {
-    await usersDelete(id)
+    await searchEnginesDelete(id)
     enqueueSnackbar("¡Se ha eliminado correctamente el código postal!", { variant: "success" })
     handleUsersGet()
   }
 
   function handleEdit(id) {
-    navigate(`/users/${id}`)
+    navigate(`/searchEngines/${id}`)
   }
 
   return (
@@ -57,7 +57,6 @@ const Users = () => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Usuario</TableCell>
               <TableCell align="center">Código postal</TableCell>
               <TableCell align="center">Estado</TableCell>
               <TableCell align="center">Municipio/Alcaldía</TableCell>
@@ -67,20 +66,19 @@ const Users = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                <TableCell>{user.user}</TableCell>
-                <TableCell align="center">{user.cp}</TableCell>
-                <TableCell align="center">{user.estado}</TableCell>
-                <TableCell align="center">{user.municipioalcaldia}</TableCell>
-                <TableCell align="center">{user.suburb}</TableCell>
-                <TableCell align="center">{user.street}</TableCell>
+            {searchEngines.map((searchEngine) => (
+              <TableRow key={searchEngine.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                <TableCell align="center">{searchEngine.cp}</TableCell>
+                <TableCell align="center">{searchEngine.estado}</TableCell>
+                <TableCell align="center">{searchEngine.municipioalcaldia}</TableCell>
+                <TableCell align="center">{searchEngine.suburb}</TableCell>
+                <TableCell align="center">{searchEngine.street}</TableCell>
                 <TableCell align="center">
                   <Grid item xs={8}>
-                    <IconButton data-testid="edit" onClick={() => handleEdit(user.id)}>
+                    <IconButton data-testid="edit" onClick={() => handleEdit(searchEngine.id)}>
                       <EditIcon />
                     </IconButton>
-                    <IconButton data-testid="delete" onClick={() => handleDelete(user.id)}>
+                    <IconButton data-testid="delete" onClick={() => handleDelete(searchEngine.id)}>
                       <DeleteIcon />
                     </IconButton>
                   </Grid>
@@ -94,4 +92,4 @@ const Users = () => {
   )
 }
 
-export default Users
+export default SearchEngines
