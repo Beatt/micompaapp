@@ -10,6 +10,7 @@ describe("UsersForm", function () {
     direccionByCP,
     coloniasByCP,
     usersSave: jest.fn(),
+    initValues: undefined,
   }
 
   let createWrapper
@@ -23,6 +24,7 @@ describe("UsersForm", function () {
         municipioalcaldia: "Tlalpan",
         estado: "Ciudad de México",
         pais: "México",
+        city: "CDMX",
       },
     })
 
@@ -44,7 +46,6 @@ describe("UsersForm", function () {
     UsersFormPage.fillInteriorNumber("7")
     UsersFormPage.fillOutdoorNumber("18")
     UsersFormPage.fillSuburb("Los Cipreses")
-    UsersFormPage.fillCity("CDMX")
 
     await UsersFormPage.submit()
 
@@ -108,19 +109,43 @@ describe("UsersForm", function () {
 
     createWrapper()
 
-    UsersFormPage.fillCP("14030")
-    await UsersFormPage.searchMyAddress()
-
-    UsersFormPage.fillStreet("3a poniente 19")
-    UsersFormPage.fillInteriorNumber("7")
-    UsersFormPage.fillOutdoorNumber("18")
-    UsersFormPage.fillSuburb("Los Cipreses")
-    UsersFormPage.fillCity("CDMX")
+    await UsersFormPage.fillRandomUser()
 
     await UsersFormPage.submit()
 
     expect(document.body.textContent).toEqual(
       expect.stringMatching("¡Lo sentimos, ha ocurrido un error al guardar tu dirección!")
     )
+  })
+
+  it("edit user", async () => {
+    props.initValues = {
+      cp: "14030",
+      street: "3a poniente 19",
+      interiorNumber: "7",
+      outdoorNumber: "18",
+      suburb: "Los Cipreses",
+    }
+
+    createWrapper()
+
+    UsersFormPage.fillCP("14030")
+    await UsersFormPage.searchMyAddress()
+
+    UsersFormPage.fillStreet("6a poniente 20")
+
+    await UsersFormPage.submit()
+
+    expect(props.usersSave).toBeCalledWith({
+      municipioalcaldia: "Tlalpan",
+      estado: "Ciudad de México",
+      pais: "México",
+      cp: "14030",
+      street: "6a poniente 20",
+      interiorNumber: "7",
+      outdoorNumber: "18",
+      suburb: "Los Cipreses",
+      city: "CDMX",
+    })
   })
 })

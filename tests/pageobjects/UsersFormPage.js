@@ -1,5 +1,6 @@
 import { act } from "react-dom/test-utils"
 import { fireEvent, screen } from "@testing-library/react"
+import users from "../factories/users"
 
 class UsersFormPage {
   static fillCP(value) {
@@ -48,6 +49,18 @@ class UsersFormPage {
     await act(() => {
       fireEvent.submit(screen.getByText("Guardar mi dirección"))
     })
+  }
+
+  static async fillRandomUser() {
+    const user = users.build()
+
+    UsersFormPage.fillCP(user.cp)
+    await UsersFormPage.searchMyAddress()
+
+    UsersFormPage.fillStreet(user.street)
+    UsersFormPage.fillInteriorNumber(user.interiorNumber)
+    UsersFormPage.fillOutdoorNumber(user.outdoorNumber)
+    UsersFormPage.fillSuburb(user.suburb)
   }
 }
 

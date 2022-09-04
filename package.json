@@ -49,6 +49,7 @@
     "node": ">=14.20.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.5.0",
     "fishery": "^2.2.2",
     "husky": "^8.0.1",
     "prettier": "2.7.1"
