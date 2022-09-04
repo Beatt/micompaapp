@@ -5,6 +5,7 @@ import NavBar from "./NavBar"
 import { Grid } from "@mui/material"
 import SearchEngines from "../views/SearchEngines"
 import SearchEnginesEdit from "../views/SearchEngines/Edit"
+import SearchEnginesShow from "../views/SearchEngines/Show"
 
 function App() {
   return (
@@ -17,7 +18,8 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/searchEngines" element={<SearchEngines />} />
-              <Route path="/searchEngines/:id" element={<SearchEnginesEdit />} />
+              <Route path="/searchEngines/:id/edit" element={<SearchEnginesEdit />} />
+              <Route path="/searchEngines/:id" element={<SearchEnginesShow />} />
             </Routes>
           </Grid>
         </Grid>
