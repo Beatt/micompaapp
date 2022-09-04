@@ -1,14 +1,14 @@
 import Users from "./index"
 import { act } from "react-dom/test-utils"
 import { fireEvent, render, screen } from "@testing-library/react"
-import * as usersApi from "../../api/users"
+import * as usersApi from "../../api/searchengines"
 import { SnackbarProvider } from "notistack"
 import { BrowserRouter } from "react-router-dom"
 
-describe("Users", function () {
+describe("SearchEngines", function () {
   let createWrapper
   beforeEach(() => {
-    jest.spyOn(usersApi, "usersGetMany").mockResolvedValue({
+    jest.spyOn(usersApi, "searchEnginesGetMany").mockResolvedValue({
       data: [
         {
           id: "1",
@@ -22,7 +22,7 @@ describe("Users", function () {
       ],
     })
 
-    jest.spyOn(usersApi, "usersDelete").mockResolvedValue()
+    jest.spyOn(usersApi, "searchEnginesDelete").mockResolvedValue()
 
     createWrapper = async () => {
       let wrapper
@@ -40,14 +40,14 @@ describe("Users", function () {
     }
   })
 
-  it("list users", async () => {
+  it("list códigos postales", async () => {
     await createWrapper()
 
     expect(document.querySelectorAll("tbody tr")).toHaveLength(1)
-    expect(document.querySelectorAll("tbody tr td")).toHaveLength(7)
+    expect(document.querySelectorAll("tbody tr td")).toHaveLength(6)
   })
 
-  it("delete user", async () => {
+  it("delete código postal", async () => {
     await createWrapper()
 
     await act(() => {
@@ -57,13 +57,13 @@ describe("Users", function () {
     expect(document.body.textContent).toEqual(expect.stringMatching("¡Se ha eliminado correctamente el código postal!"))
   })
 
-  it("edit user", async () => {
+  it("edit código postal", async () => {
     await createWrapper()
 
     await act(() => {
       fireEvent.click(screen.getByTestId("edit"))
     })
 
-    expect(window.location.href).toEqual(expect.stringMatching(`users/1`))
+    expect(window.location.href).toEqual(expect.stringMatching(`searchEngines/1`))
   })
 })

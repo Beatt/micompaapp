@@ -1,14 +1,33 @@
-export const direccionByCP = () =>
+export const searchEnginesCreate = () => Promise.resolve()
+
+export const searchEnginesUpdate = () => Promise.resolve()
+
+export const searchEnginesGetOne = () =>
   Promise.resolve({
     data: {
+      id: "12310321",
+      user: "Gabriel",
+      cp: "14030",
       municipioalcaldia: "Tlalpan",
       estado: "Ciudad de México",
-      pais: "México",
-      city: "Ciudad de México",
+      street: "3 poniente 19 7",
+      suburb: "Isidro fabela",
     },
   })
 
-export const coloniasByCP = () =>
+export const searchEnginesGetMany = () =>
   Promise.resolve({
-    data: ["Minerva", "Granjas Esmeralda", "Los Cipreses", "Progreso del Sur"],
+    data: [
+      {
+        id: "12310321",
+        user: "Gabriel",
+        cp: "14030",
+        municipioalcaldia: "Tlalpan",
+        estado: "Ciudad de México",
+        street: "3 poniente 19 7",
+        suburb: "Isidro fabela",
+      },
+    ],
   })
+
+export const searchEnginesDelete = () => Promise.resolve()

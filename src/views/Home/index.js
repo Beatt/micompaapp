@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Box, Typography } from "@mui/material"
-import UsersCreate from "../Users/Create"
+import SearchEnginesCreate from "../SearchEngines/Create"
 
 const Home = () => {
   return (
@@ -12,7 +12,7 @@ const Home = () => {
           encuentra en nuestra API.
         </Typography>
       </Box>
-      <UsersCreate />
+      <SearchEnginesCreate />
     </Box>
   )
 }

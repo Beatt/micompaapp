@@ -6,7 +6,7 @@ import { useSnackbar } from "notistack"
 
 const { useState, useEffect } = React
 
-const UsersForm = ({ direccionByCP, usersSave, coloniasByCP, initValues }) => {
+const SearchEnginesForm = ({ catalogsDireccionByCP, searchEnginesSave, catalogsColoniasByCP, initValues }) => {
   const { enqueueSnackbar } = useSnackbar()
   const [showInfo, setShowInfo] = useState(initValues !== undefined)
   const [colonias, setColonias] = useState([])
@@ -29,13 +29,13 @@ const UsersForm = ({ direccionByCP, usersSave, coloniasByCP, initValues }) => {
 
   useEffect(() => {
     if (foundCP) {
-      coloniasByCP(formik.values.cp).then(({ data }) => setColonias(data))
+      catalogsColoniasByCP(formik.values.cp).then(({ data }) => setColonias(data))
     }
   }, [foundCP])
 
   async function handleSubmit(values) {
     try {
-      await usersSave({
+      await searchEnginesSave({
         ...values,
       })
       enqueueSnackbar("¡Se ha guardado correctamente tu dirección!", { variant: "success" })
@@ -49,7 +49,7 @@ const UsersForm = ({ direccionByCP, usersSave, coloniasByCP, initValues }) => {
       await formik.submitForm()
     } else {
       try {
-        const { data } = await direccionByCP(formik.values.cp)
+        const { data } = await catalogsDireccionByCP(formik.values.cp)
         formik.setValues({
           ...formik.values,
           municipioalcaldia: data.municipioalcaldia,
@@ -81,19 +81,7 @@ const UsersForm = ({ direccionByCP, usersSave, coloniasByCP, initValues }) => {
     }
 
     if (colonias.length === 0) {
-      return (
-        <TextField
-          id="suburb"
-          label="Colonia"
-          data-testid="suburb"
-          value={formik.values.suburb}
-          onChange={formik.handleChange}
-          error={formik.touched.suburb && Boolean(formik.errors.suburb)}
-          helperText={formik.touched.suburb && formik.errors.suburb}
-          fullWidth
-          margin={"normal"}
-        />
-      )
+      return <TextField {...coloniaProps} data-testid="suburb" />
     } else {
       return (
         <TextField name="suburb" {...coloniaProps} data-testid="suburb" select>
@@ -249,4 +237,4 @@ const UsersForm = ({ direccionByCP, usersSave, coloniasByCP, initValues }) => {
   )
 }
 
-export default UsersForm
+export default SearchEnginesForm
