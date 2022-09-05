@@ -96,6 +96,8 @@ const AddressesForm = ({ catalogsPostalCode, onSubmit, catalogsSuburbsByPostalCo
     }
   }
 
+  const isEdit = initValues?.id !== undefined
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <Grid container>
@@ -110,8 +112,9 @@ const AddressesForm = ({ catalogsPostalCode, onSubmit, catalogsSuburbsByPostalCo
             helperText={formik.touched.cp && formik.errors.cp}
             fullWidth
             margin={"normal"}
+            disabled={isEdit}
           />
-          <Button type="button" size="large" variant="outlined" onClick={() => getAddressByCp()}>
+          <Button type="button" size="large" variant="outlined" onClick={() => getAddressByCp()} disabled={isEdit}>
             Buscar mi dirección
           </Button>
         </Grid>
