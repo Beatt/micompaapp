@@ -1,14 +1,7 @@
-export const catalogsDireccionByCP = () =>
-  Promise.resolve({
-    data: {
-      municipioalcaldia: "Tlalpan",
-      estado: "Ciudad de México",
-      pais: "México",
-      city: "Ciudad de México",
-    },
-  })
+import axios from "axios"
 
-export const catalogsColoniasByCP = () =>
-  Promise.resolve({
-    data: ["Minerva", "Granjas Esmeralda", "Los Cipreses", "Progreso del Sur"],
-  })
+export const catalogsPostalCode = (postalCode) =>
+  axios.get(`http://localhost:3000/api/v1/catalogs/postal_code?postal_code=${postalCode}`)
+
+export const catalogsSuburbsByPostalCode = (postalCode) =>
+  axios.get(`http://localhost:3000/api/v1/catalogs/suburbs?postal_code=${postalCode}`)

@@ -6,19 +6,19 @@ import { useSnackbar } from "notistack"
 
 const { useState, useEffect } = React
 
-const SearchEnginesForm = ({ catalogsDireccionByCP, searchEnginesSave, catalogsColoniasByCP, initValues }) => {
+const AddressesForm = ({ catalogsPostalCode, onSubmit, catalogsSuburbsByPostalCode, initValues }) => {
   const { enqueueSnackbar } = useSnackbar()
   const [showInfo, setShowInfo] = useState(initValues !== undefined)
   const [colonias, setColonias] = useState([])
   const formik = useFormik({
     initialValues: {
       cp: initValues?.cp ?? "",
-      municipioalcaldia: initValues?.municipioalcaldia ?? "",
-      estado: initValues?.estado ?? "",
-      pais: initValues?.pais ?? "",
+      municipality: initValues?.municipality ?? "",
+      state: initValues?.state ?? "",
+      country: initValues?.country ?? "",
       street: initValues?.street ?? "",
-      interiorNumber: initValues?.interiorNumber ?? "",
-      outdoorNumber: initValues?.outdoorNumber ?? "",
+      interior_number: initValues?.interior_number ?? "",
+      outdoor_number: initValues?.outdoor_number ?? "",
       suburb: initValues?.suburb ?? "",
       city: initValues?.city ?? "",
     },
@@ -29,13 +29,13 @@ const SearchEnginesForm = ({ catalogsDireccionByCP, searchEnginesSave, catalogsC
 
   useEffect(() => {
     if (foundCP) {
-      catalogsColoniasByCP(formik.values.cp).then(({ data }) => setColonias(data))
+      catalogsSuburbsByPostalCode(formik.values.cp).then(({ data }) => setColonias(data))
     }
   }, [foundCP])
 
   async function handleSubmit(values) {
     try {
-      await searchEnginesSave({
+      await onSubmit({
         ...values,
       })
       enqueueSnackbar("¡Se ha guardado correctamente tu dirección!", { variant: "success" })
@@ -49,12 +49,12 @@ const SearchEnginesForm = ({ catalogsDireccionByCP, searchEnginesSave, catalogsC
       await formik.submitForm()
     } else {
       try {
-        const { data } = await catalogsDireccionByCP(formik.values.cp)
+        const { data } = await catalogsPostalCode(formik.values.cp)
         formik.setValues({
           ...formik.values,
-          municipioalcaldia: data.municipioalcaldia,
-          estado: data.estado,
-          pais: data.pais,
+          municipality: data.municipality,
+          state: data.state,
+          country: data.country,
           city: data.city,
         })
         setFoundCP(true)
@@ -86,9 +86,9 @@ const SearchEnginesForm = ({ catalogsDireccionByCP, searchEnginesSave, catalogsC
       return (
         <TextField name="suburb" {...coloniaProps} data-testid="suburb" select>
           <MenuItem value="">Selecciona una opción</MenuItem>
-          {colonias.map((colonia, index) => (
-            <MenuItem key={index} value={colonia}>
-              {colonia}
+          {colonias.map(({ name }, index) => (
+            <MenuItem key={index} value={name}>
+              {name}
             </MenuItem>
           ))}
         </TextField>
@@ -134,26 +134,26 @@ const SearchEnginesForm = ({ catalogsDireccionByCP, searchEnginesSave, catalogsC
             </Grid>
             <Grid item sm={3}>
               <TextField
-                id="outdoorNumber"
+                id="outdoor_number"
                 label="N. Exterior"
                 data-testid="outdoorNumber"
-                value={formik.values.outdoorNumber}
+                value={formik.values.outdoor_number}
                 onChange={formik.handleChange}
-                error={formik.touched.outdoorNumber && Boolean(formik.errors.outdoorNumber)}
-                helperText={formik.touched.outdoorNumber && formik.errors.outdoorNumber}
+                error={formik.touched.outdoor_number && Boolean(formik.errors.outdoor_number)}
+                helperText={formik.touched.outdoor_number && formik.errors.outdoor_number}
                 fullWidth
                 margin={"normal"}
               />
             </Grid>
             <Grid item sm={3}>
               <TextField
-                id="interiorNumber"
+                id="interior_number"
                 label="N. Interior (optativo)"
                 data-testid="interiorNumber"
-                value={formik.values.interiorNumber}
+                value={formik.values.interior_number}
                 onChange={formik.handleChange}
-                error={formik.touched.interiorNumber && Boolean(formik.errors.interiorNumber)}
-                helperText={formik.touched.interiorNumber && formik.errors.interiorNumber}
+                error={formik.touched.interior_number && Boolean(formik.errors.interior_number)}
+                helperText={formik.touched.interior_number && formik.errors.interior_number}
                 fullWidth
                 margin={"normal"}
               />
@@ -162,13 +162,13 @@ const SearchEnginesForm = ({ catalogsDireccionByCP, searchEnginesSave, catalogsC
           <Grid container>
             <Grid item sm={6}>
               <TextField
-                id="municipioalcaldia"
+                id="municipality"
                 label="Municipio/Alcaldía"
-                data-testid="municipioalcaldia"
-                value={formik.values.municipioalcaldia}
+                data-testid="municipality"
+                value={formik.values.municipality}
                 onChange={formik.handleChange}
-                error={formik.touched.municipioalcaldia && Boolean(formik.errors.municipioalcaldia)}
-                helperText={formik.touched.municipioalcaldia && formik.errors.municipioalcaldia}
+                error={formik.touched.municipality && Boolean(formik.errors.municipality)}
+                helperText={formik.touched.municipality && formik.errors.municipality}
                 fullWidth
                 margin={"normal"}
                 disabled={foundCP}
@@ -181,13 +181,13 @@ const SearchEnginesForm = ({ catalogsDireccionByCP, searchEnginesSave, catalogsC
           <Grid container>
             <Grid item sm={6}>
               <TextField
-                id="pais"
+                id="country"
                 label="Pais"
-                data-testid="pais"
-                value={formik.values.pais}
+                data-testid="country"
+                value={formik.values.country}
                 onChange={formik.handleChange}
-                error={formik.touched.pais && Boolean(formik.errors.pais)}
-                helperText={formik.touched.pais && formik.errors.pais}
+                error={formik.touched.country && Boolean(formik.errors.country)}
+                helperText={formik.touched.country && formik.errors.country}
                 fullWidth
                 margin={"normal"}
                 disabled={foundCP}
@@ -195,13 +195,13 @@ const SearchEnginesForm = ({ catalogsDireccionByCP, searchEnginesSave, catalogsC
             </Grid>
             <Grid item sm={6}>
               <TextField
-                id="estado"
+                id="state"
                 label="Estado"
-                data-testid="estado"
-                value={formik.values.estado}
+                data-testid="state"
+                value={formik.values.state}
                 onChange={formik.handleChange}
-                error={formik.touched.estado && Boolean(formik.errors.estado)}
-                helperText={formik.touched.estado && formik.errors.estado}
+                error={formik.touched.state && Boolean(formik.errors.state)}
+                helperText={formik.touched.state && formik.errors.state}
                 fullWidth
                 margin={"normal"}
                 disabled={foundCP}
@@ -237,4 +237,4 @@ const SearchEnginesForm = ({ catalogsDireccionByCP, searchEnginesSave, catalogsC
   )
 }
 
-export default SearchEnginesForm
+export default AddressesForm

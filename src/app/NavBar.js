@@ -12,7 +12,7 @@ const NavBar = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <Link to="/">MI COMPA APP</Link>
           </Typography>
-          <Button color="inherit" onClick={() => navigate("/searchEngines")}>
+          <Button color="inherit" onClick={() => navigate("/addresses")}>
             Ver lista de códigos postales
           </Button>
         </Toolbar>

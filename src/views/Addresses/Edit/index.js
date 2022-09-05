@@ -1,23 +1,32 @@
 import * as React from "react"
-import SearchEnginesForm from "../Form"
-import { searchEnginesGetOne, searchEnginesUpdate } from "../../../api/searchengines"
-import { catalogsDireccionByCP, catalogsColoniasByCP } from "../../../api/catalogs"
+import AddressesForm from "../Form"
+import { addressesGetOne, addressesUpdate } from "../../../api/addresses"
+import { catalogsPostalCode, catalogsSuburbsByPostalCode } from "../../../api/catalogs"
 import { Box, Typography } from "@mui/material"
 import { useParams } from "react-router-dom"
 
 const { useState, useEffect } = React
 
-const SearchEnginesEdit = () => {
+const AddressesEdit = () => {
   const params = useParams()
   const id = params.id
 
   const [initValues, setInitialValues] = useState(null)
 
   useEffect(() => {
-    searchEnginesGetOne({ id }).then(({ data }) => {
+    addressesGetOne(id).then(({ data }) => {
       setInitialValues(data)
     })
   }, [])
+
+  async function handleSubmit(data) {
+    try {
+      await addressesUpdate(id, data)
+      return Promise.resolve()
+    } catch {
+      return Promise.reject()
+    }
+  }
 
   return (
     <Box boxShadow={5} p={5}>
@@ -28,12 +37,10 @@ const SearchEnginesEdit = () => {
         </Typography>
       </Box>
       {initValues && (
-        <SearchEnginesForm
-          {...{ searchEnginesSave: searchEnginesUpdate, catalogsDireccionByCP, catalogsColoniasByCP, initValues }}
-        />
+        <AddressesForm {...{ onSubmit: handleSubmit, catalogsPostalCode, catalogsSuburbsByPostalCode, initValues }} />
       )}
     </Box>
   )
 }
 
-export default SearchEnginesEdit
+export default AddressesEdit

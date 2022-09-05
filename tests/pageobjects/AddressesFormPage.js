@@ -1,8 +1,8 @@
 import { act } from "react-dom/test-utils"
 import { fireEvent, screen } from "@testing-library/react"
-import searchEngines from "../factories/searchEngines"
+import addresses from "../factories/addresses"
 
-class SearchEnginesFormPage {
+class AddressesFormPage {
   static fillCP(value) {
     fireEvent.change(screen.getByTestId("cp").querySelector("input"), { target: { value } })
   }
@@ -28,15 +28,15 @@ class SearchEnginesFormPage {
   }
 
   static fillCountry(value) {
-    fireEvent.change(screen.getByTestId("pais").querySelector("input"), { target: { value } })
+    fireEvent.change(screen.getByTestId("country").querySelector("input"), { target: { value } })
   }
 
   static fillEstado(value) {
-    fireEvent.change(screen.getByTestId("estado").querySelector("input"), { target: { value } })
+    fireEvent.change(screen.getByTestId("state").querySelector("input"), { target: { value } })
   }
 
   static fillMunicipioAlcaldia(value) {
-    fireEvent.change(screen.getByTestId("municipioalcaldia").querySelector("input"), { target: { value } })
+    fireEvent.change(screen.getByTestId("municipality").querySelector("input"), { target: { value } })
   }
 
   static async searchMyAddress() {
@@ -51,17 +51,17 @@ class SearchEnginesFormPage {
     })
   }
 
-  static async fillRandomUser() {
-    const searchEngine = searchEngines.build()
+  static async fillRandomAddress() {
+    const address = addresses.build()
 
-    SearchEnginesFormPage.fillCP(searchEngine.cp)
-    await SearchEnginesFormPage.searchMyAddress()
+    AddressesFormPage.fillCP(address.cp)
+    await AddressesFormPage.searchMyAddress()
 
-    SearchEnginesFormPage.fillStreet(searchEngine.street)
-    SearchEnginesFormPage.fillInteriorNumber(searchEngine.interiorNumber)
-    SearchEnginesFormPage.fillOutdoorNumber(searchEngine.outdoorNumber)
-    SearchEnginesFormPage.fillSuburb(searchEngine.suburb)
+    AddressesFormPage.fillStreet(address.street)
+    AddressesFormPage.fillInteriorNumber(address.interior_number)
+    AddressesFormPage.fillOutdoorNumber(address.outdoor_number)
+    AddressesFormPage.fillSuburb(address.suburb)
   }
 }
 
-export default SearchEnginesFormPage
+export default AddressesFormPage

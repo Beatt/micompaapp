@@ -1,28 +1,28 @@
 import Users from "./index"
 import { act } from "react-dom/test-utils"
 import { fireEvent, render, screen } from "@testing-library/react"
-import * as usersApi from "../../api/searchengines"
+import * as api from "../../api/addresses"
 import { SnackbarProvider } from "notistack"
 import { BrowserRouter } from "react-router-dom"
 
-describe("SearchEngines", function () {
+describe("Addresses", function () {
   let createWrapper
   beforeEach(() => {
-    jest.spyOn(usersApi, "searchEnginesGetMany").mockResolvedValue({
+    jest.spyOn(api, "addressesGetMany").mockResolvedValue({
       data: [
         {
           id: "1",
           user: "Gabriel",
           cp: "14030",
-          municipioalcaldia: "Tlalpan",
-          estado: "Ciudad de México",
+          municipality: "Tlalpan",
+          state: "Ciudad de México",
           street: "3 poniente 19 7",
           suburb: "Isidro fabela",
         },
       ],
     })
 
-    jest.spyOn(usersApi, "searchEnginesDelete").mockResolvedValue()
+    jest.spyOn(api, "addressesDelete").mockResolvedValue()
 
     createWrapper = async () => {
       let wrapper
@@ -40,40 +40,40 @@ describe("SearchEngines", function () {
     }
   })
 
-  it("list códigos postales", async () => {
+  it("list addresses", async () => {
     await createWrapper()
 
     expect(document.querySelectorAll("tbody tr")).toHaveLength(1)
     expect(document.querySelectorAll("tbody tr td")).toHaveLength(6)
   })
 
-  it("delete código postal", async () => {
+  it("delete address", async () => {
     await createWrapper()
 
     await act(() => {
       fireEvent.click(screen.getByTestId("delete"))
     })
 
-    expect(document.body.textContent).toEqual(expect.stringMatching("¡Se ha eliminado correctamente el código postal!"))
+    expect(document.body.textContent).toEqual(expect.stringMatching("¡Se ha eliminado correctamente la dirección!"))
   })
 
-  it("edit código postal", async () => {
+  it("edit address", async () => {
     await createWrapper()
 
     await act(() => {
       fireEvent.click(screen.getByTestId("edit"))
     })
 
-    expect(window.location.href).toEqual(expect.stringMatching(`searchEngines/1/edit`))
+    expect(window.location.href).toEqual(expect.stringMatching(`addresses/1/edit`))
   })
 
-  it("show código postal", async () => {
+  it("show address", async () => {
     await createWrapper()
 
     await act(() => {
       fireEvent.click(screen.getByTestId("details"))
     })
 
-    expect(window.location.href).toEqual(expect.stringMatching(`searchEngines/1`))
+    expect(window.location.href).toEqual(expect.stringMatching(`addresses/1`))
   })
 })
