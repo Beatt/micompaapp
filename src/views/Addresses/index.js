@@ -15,44 +15,44 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import DetailsIcon from "@mui/icons-material/Details"
-import { searchEnginesDelete, searchEnginesGetMany } from "../../api/searchengines"
+import { addressesDelete, addressesGetMany } from "../../api/addresses"
 import { useSnackbar } from "notistack"
 import { useNavigate } from "react-router-dom"
 
 const { useState, useEffect } = React
 
-const SearchEngines = () => {
+const Addresses = () => {
   const { enqueueSnackbar } = useSnackbar()
   const navigate = useNavigate()
-  const [searchEngines, setSearchEngines] = useState([])
+  const [addresses, setAddresses] = useState([])
 
   useEffect(() => {
     handleUsersGet()
   }, [])
 
   function handleUsersGet() {
-    searchEnginesGetMany().then(({ data }) => {
-      setSearchEngines(data)
+    addressesGetMany().then(({ data }) => {
+      setAddresses(data)
     })
   }
 
   async function handleDelete(id) {
-    await searchEnginesDelete(id)
-    enqueueSnackbar("¡Se ha eliminado correctamente el código postal!", { variant: "success" })
+    await addressesDelete(id)
+    enqueueSnackbar("¡Se ha eliminado correctamente la dirección!", { variant: "success" })
     handleUsersGet()
   }
 
   function handleEdit(id) {
-    navigate(`/searchEngines/${id}/edit`)
+    navigate(`/addresses/${id}/edit`)
   }
 
   function handleDetails(id) {
-    navigate(`/searchEngines/${id}`)
+    navigate(`/addresses/${id}`)
   }
 
   return (
     <Box boxShadow={5} p={5}>
-      <Typography variant="h1">¡Códigos postales!</Typography>
+      <Typography variant="h1">¡Direcciones!</Typography>
       <Box mb={2}>
         <Typography variant="p">
           Gracias a ti, pronto llegaremos a la meta y tendremos todos los códigos postales disponibles en nuestra API.
@@ -71,22 +71,22 @@ const SearchEngines = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {searchEngines.map((searchEngine) => (
-              <TableRow key={searchEngine.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                <TableCell align="center">{searchEngine.cp}</TableCell>
-                <TableCell align="center">{searchEngine.estado}</TableCell>
-                <TableCell align="center">{searchEngine.municipioalcaldia}</TableCell>
-                <TableCell align="center">{searchEngine.suburb}</TableCell>
-                <TableCell align="center">{searchEngine.street}</TableCell>
+            {addresses.map((address) => (
+              <TableRow key={address.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                <TableCell align="center">{address.cp}</TableCell>
+                <TableCell align="center">{address.state}</TableCell>
+                <TableCell align="center">{address.municipality}</TableCell>
+                <TableCell align="center">{address.suburb}</TableCell>
+                <TableCell align="center">{address.street}</TableCell>
                 <TableCell align="center">
                   <Grid item xs={8}>
-                    <IconButton data-testid="edit" onClick={() => handleEdit(searchEngine.id)}>
+                    <IconButton data-testid="edit" onClick={() => handleEdit(address.id)}>
                       <EditIcon />
                     </IconButton>
-                    <IconButton data-testid="delete" onClick={() => handleDelete(searchEngine.id)}>
+                    <IconButton data-testid="delete" onClick={() => handleDelete(address.id)}>
                       <DeleteIcon />
                     </IconButton>
-                    <IconButton data-testid="details" onClick={() => handleDetails(searchEngine.id)}>
+                    <IconButton data-testid="details" onClick={() => handleDetails(address.id)}>
                       <DetailsIcon />
                     </IconButton>
                   </Grid>
@@ -100,4 +100,4 @@ const SearchEngines = () => {
   )
 }
 
-export default SearchEngines
+export default Addresses

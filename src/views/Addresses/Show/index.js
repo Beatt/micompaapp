@@ -1,17 +1,17 @@
 import { Box, Grid, Typography } from "@mui/material"
 import * as React from "react"
-import { searchEnginesGetOne } from "../../../api/searchengines"
+import { addressesGetOne } from "../../../api/addresses"
 import { useParams } from "react-router-dom"
 
 const { useState, useEffect } = React
 
-const SearchEnginesShow = () => {
+const AddressesShow = () => {
   const params = useParams()
   const id = params.id
   const [values, setValues] = useState(null)
 
   useEffect(() => {
-    searchEnginesGetOne(id).then(({ data }) => setValues(data))
+    addressesGetOne(id).then(({ data }) => setValues(data))
   }, [])
 
   return (
@@ -36,11 +36,11 @@ const SearchEnginesShow = () => {
           </Grid>
           <Grid item sm={3}>
             <Typography variant="h6">Estado</Typography>
-            <Typography variant="p">{values?.estado}</Typography>
+            <Typography variant="p">{values?.state}</Typography>
           </Grid>
           <Grid item sm={3}>
             <Typography variant="h6">Municipio/Alcaldía</Typography>
-            <Typography variant="p">{values?.municipioalcaldia}</Typography>
+            <Typography variant="p">{values?.municipality}</Typography>
           </Grid>
         </Grid>
         <Grid container mt={3}>
@@ -50,11 +50,11 @@ const SearchEnginesShow = () => {
           </Grid>
           <Grid item sm={3}>
             <Typography variant="h6">N. Exterior</Typography>
-            <Typography variant="p">{values?.outdoorNumber}</Typography>
+            <Typography variant="p">{values?.outdoor_number}</Typography>
           </Grid>
           <Grid item sm={3}>
             <Typography variant="h6">N. Interior</Typography>
-            <Typography variant="p">{values?.interiorNumber}</Typography>
+            <Typography variant="p">{values?.interior_number}</Typography>
           </Grid>
           <Grid item sm={3}>
             <Typography variant="h6">Colonia</Typography>
@@ -72,4 +72,4 @@ const SearchEnginesShow = () => {
   )
 }
 
-export default SearchEnginesShow
+export default AddressesShow

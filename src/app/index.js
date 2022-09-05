@@ -3,9 +3,9 @@ import { Route, Routes } from "react-router-dom"
 import Home from "../views/Home"
 import NavBar from "./NavBar"
 import { Grid } from "@mui/material"
-import SearchEngines from "../views/SearchEngines"
-import SearchEnginesEdit from "../views/SearchEngines/Edit"
-import SearchEnginesShow from "../views/SearchEngines/Show"
+import Addresses from "../views/Addresses"
+import AddressesEdit from "../views/Addresses/Edit"
+import AddressesShow from "../views/Addresses/Show"
 
 function App() {
   return (
@@ -17,9 +17,9 @@ function App() {
           <Grid item sm={12}>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/searchEngines" element={<SearchEngines />} />
-              <Route path="/searchEngines/:id/edit" element={<SearchEnginesEdit />} />
-              <Route path="/searchEngines/:id" element={<SearchEnginesShow />} />
+              <Route path="/addresses" element={<Addresses />} />
+              <Route path="/addresses/:id/edit" element={<AddressesEdit />} />
+              <Route path="/addresses/:id" element={<AddressesShow />} />
             </Routes>
           </Grid>
         </Grid>
