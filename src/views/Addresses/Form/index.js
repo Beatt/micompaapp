@@ -5,6 +5,7 @@ import { validationSchema } from "./validationSchema"
 import { useSnackbar } from "notistack"
 import Autocomplete from "../../../components/Autocomplete"
 import { resolveAddressComponentToAddress } from "../../../helpers"
+import { useNavigate } from "react-router-dom"
 
 const ADDRESS_OPTION = "address"
 const POSTAL_CODE_OPTION = "postalCode"
@@ -13,6 +14,7 @@ const POSTAL_CODE_LENGTH = 5
 const { useState, useEffect } = React
 
 const AddressesForm = ({ catalogsPostalCode, onSubmit, catalogsSuburbsByPostalCode, initValues }) => {
+  const navigate = useNavigate()
   const { enqueueSnackbar } = useSnackbar()
   const [showInfo, setShowInfo] = useState(initValues !== undefined)
   const [colonias, setColonias] = useState([])
@@ -50,8 +52,11 @@ const AddressesForm = ({ catalogsPostalCode, onSubmit, catalogsSuburbsByPostalCo
         ...values,
       })
       enqueueSnackbar("¡Se ha guardado correctamente tu dirección!", { variant: "success" })
-    } catch {
-      enqueueSnackbar("¡Lo sentimos, ha ocurrido un error al guardar tu dirección!", { variant: "error" })
+      navigate("/addresses")
+    } catch ({ response }) {
+      enqueueSnackbar(response?.data?.message ?? "¡Lo sentimos, ha ocurrido un error al guardar tu dirección!", {
+        variant: "error",
+      })
     }
   }
 

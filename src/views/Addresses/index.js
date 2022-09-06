@@ -1,6 +1,7 @@
 import * as React from "react"
 import {
   Box,
+  Button,
   Grid,
   IconButton,
   Paper,
@@ -58,6 +59,13 @@ const Addresses = () => {
           Gracias a ti, pronto llegaremos a la meta y tendremos todos los códigos postales disponibles en nuestra API.
         </Typography>
       </Box>
+      <Grid container>
+        <Grid item sm={12} textAlign="right">
+          <Button type="button" variant="contained" color="primary" onClick={() => navigate("/")}>
+            Agregar nueva dirección
+          </Button>
+        </Grid>
+      </Grid>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
