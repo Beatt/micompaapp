@@ -4,6 +4,7 @@ import AddressesForm from "./index"
 import { catalogsPostalCode, catalogsSuburbsByPostalCode } from "../../../api/catalogs"
 import { SnackbarProvider } from "notistack"
 import AddressesFormPage from "../../../../tests/pageobjects/AddressesFormPage"
+import { BrowserRouter } from "react-router-dom"
 
 jest.mock("../../../components/Autocomplete")
 
@@ -39,9 +40,11 @@ describe("AddressesForm", function () {
 
     createWrapper = () =>
       render(
-        <SnackbarProvider>
-          <AddressesForm {...props} />
-        </SnackbarProvider>
+        <BrowserRouter>
+          <SnackbarProvider>
+            <AddressesForm {...props} />
+          </SnackbarProvider>
+        </BrowserRouter>
       )
   })
 
@@ -75,6 +78,7 @@ describe("AddressesForm", function () {
       expect(screen.getByTestId("state").querySelector("input").disabled).toBeTruthy()
       expect(screen.getByTestId("city").querySelector("input").disabled).toBeTruthy()
       expect(document.body.textContent).toEqual(expect.stringMatching("¡Se ha guardado correctamente tu dirección!"))
+      expect(window.location.href).toEqual(expect.stringMatching("/addresses"))
     })
 
     it("create address when cp was not found", async () => {
@@ -116,7 +120,9 @@ describe("AddressesForm", function () {
     })
 
     it("show error message when create address fail", async () => {
-      jest.spyOn(props, "onSubmit").mockRejectedValue()
+      jest
+        .spyOn(props, "onSubmit")
+        .mockRejectedValue({ response: { data: { message: "¡El código postal ya existe!" } } })
 
       createWrapper()
 
@@ -124,9 +130,7 @@ describe("AddressesForm", function () {
 
       await AddressesFormPage.submit()
 
-      expect(document.body.textContent).toEqual(
-        expect.stringMatching("¡Lo sentimos, ha ocurrido un error al guardar tu dirección!")
-      )
+      expect(document.body.textContent).toEqual(expect.stringMatching("¡El código postal ya existe!"))
     })
 
     it("edit address", async () => {
