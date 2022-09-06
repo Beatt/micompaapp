@@ -1,8 +1,14 @@
 import * as React from "react"
-import { Button, Grid, MenuItem, TextField } from "@mui/material"
+import { Button, FormControlLabel, Grid, MenuItem, Radio, RadioGroup, TextField } from "@mui/material"
 import { useFormik } from "formik"
 import { validationSchema } from "./validationSchema"
 import { useSnackbar } from "notistack"
+import Autocomplete from "../../../components/Autocomplete"
+import { resolveAddressComponentToAddress } from "../../../helpers"
+
+const ADDRESS_OPTION = "address"
+const POSTAL_CODE_OPTION = "postalCode"
+const POSTAL_CODE_LENGTH = 5
 
 const { useState, useEffect } = React
 
@@ -10,8 +16,10 @@ const AddressesForm = ({ catalogsPostalCode, onSubmit, catalogsSuburbsByPostalCo
   const { enqueueSnackbar } = useSnackbar()
   const [showInfo, setShowInfo] = useState(initValues !== undefined)
   const [colonias, setColonias] = useState([])
+  const [optionSelected, setOptionSelected] = useState(null)
   const formik = useFormik({
     initialValues: {
+      id: initValues?.id,
       cp: initValues?.cp ?? "",
       municipality: initValues?.municipality ?? "",
       state: initValues?.state ?? "",
@@ -25,11 +33,14 @@ const AddressesForm = ({ catalogsPostalCode, onSubmit, catalogsSuburbsByPostalCo
     validationSchema: validationSchema,
     onSubmit: handleSubmit,
   })
+  const isEdit = initValues?.id !== undefined
   const [foundCP, setFoundCP] = useState(false)
 
   useEffect(() => {
-    if (foundCP) {
-      catalogsSuburbsByPostalCode(formik.values.cp).then(({ data }) => setColonias(data))
+    if (foundCP && formik.values.cp) {
+      catalogsSuburbsByPostalCode(formik.values.cp)
+        .then(({ data }) => setColonias(data))
+        .catch(() => {})
     }
   }, [foundCP])
 
@@ -45,9 +56,7 @@ const AddressesForm = ({ catalogsPostalCode, onSubmit, catalogsSuburbsByPostalCo
   }
 
   async function getAddressByCp() {
-    if (!formik.values.cp) {
-      await formik.submitForm()
-    } else {
+    if (formik.values.cp.length === POSTAL_CODE_LENGTH) {
       try {
         const { data } = await catalogsPostalCode(formik.values.cp)
         formik.setValues({
@@ -65,6 +74,8 @@ const AddressesForm = ({ catalogsPostalCode, onSubmit, catalogsSuburbsByPostalCo
       } finally {
         setShowInfo(true)
       }
+    } else {
+      await formik.submitForm()
     }
   }
 
@@ -80,7 +91,7 @@ const AddressesForm = ({ catalogsPostalCode, onSubmit, catalogsSuburbsByPostalCo
       margin: "normal",
     }
 
-    if (colonias.length === 0) {
+    if (suburbsZero()) {
       return <TextField {...coloniaProps} data-testid="suburb" />
     } else {
       return (
@@ -96,29 +107,95 @@ const AddressesForm = ({ catalogsPostalCode, onSubmit, catalogsSuburbsByPostalCo
     }
   }
 
-  const isEdit = initValues?.id !== undefined
+  function handleAutocompleteChange(autocomplete) {
+    const address = resolveAddressComponentToAddress(autocomplete.getPlace().address_components)
+    formik.setValues({
+      ...formik.values,
+      ...address,
+    })
+    setShowInfo(true)
+    setFoundCP(true)
+  }
 
-  return (
-    <form onSubmit={formik.handleSubmit}>
-      <Grid container>
+  function renderOptionSelected() {
+    if (optionSelected === ADDRESS_OPTION) {
+      return (
         <Grid item sm={12}>
-          <TextField
-            id="cp"
-            label="Código postal"
-            data-testid="cp"
-            value={formik.values.cp}
-            onChange={formik.handleChange}
-            error={formik.touched.cp && Boolean(formik.errors.cp)}
-            helperText={formik.touched.cp && formik.errors.cp}
-            fullWidth
-            margin={"normal"}
-            disabled={isEdit}
-          />
+          <Autocomplete onChange={handleAutocompleteChange} />
+        </Grid>
+      )
+    } else if (optionSelected === POSTAL_CODE_OPTION) {
+      return (
+        <Grid item sm={12}>
+          {renderPostalCode()}
           <Button type="button" size="large" variant="outlined" onClick={() => getAddressByCp()} disabled={isEdit}>
             Buscar mi dirección
           </Button>
         </Grid>
-      </Grid>
+      )
+    }
+  }
+
+  function renderPostalCode() {
+    return (
+      <TextField
+        id="cp"
+        label="Código postal"
+        placeholder="Ingresa un código postal"
+        data-testid="cp"
+        value={formik.values.cp}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.cp && Boolean(formik.errors.cp)}
+        helperText={formik.touched.cp && formik.errors.cp}
+        fullWidth
+        margin={"normal"}
+        disabled={isEdit}
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
+    )
+  }
+
+  function suburbsZero() {
+    return colonias.length === 0
+  }
+
+  return (
+    <form onSubmit={formik.handleSubmit} noValidate>
+      {formik.values.id === undefined && (
+        <Grid container>
+          <Grid item sm={12}>
+            <RadioGroup
+              name="quiz"
+              onChange={({ target }) => setOptionSelected(target.value)}
+              style={{
+                display: "flex",
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
+            >
+              <FormControlLabel
+                data-testid="postalCodeOption"
+                value={POSTAL_CODE_OPTION}
+                control={<Radio />}
+                label="Código postal"
+              />
+              <FormControlLabel
+                data-testid="addressOption"
+                value={ADDRESS_OPTION}
+                control={<Radio />}
+                label="Calle, número, municipio o alcaldía"
+              />
+            </RadioGroup>
+          </Grid>
+        </Grid>
+      )}
+
+      <Grid container>{renderOptionSelected()}</Grid>
+
       {showInfo && (
         <>
           <Grid container>
@@ -174,7 +251,6 @@ const AddressesForm = ({ catalogsPostalCode, onSubmit, catalogsSuburbsByPostalCo
                 helperText={formik.touched.municipality && formik.errors.municipality}
                 fullWidth
                 margin={"normal"}
-                disabled={foundCP}
               />
             </Grid>
             <Grid item sm={6}>
@@ -226,6 +302,11 @@ const AddressesForm = ({ catalogsPostalCode, onSubmit, catalogsSuburbsByPostalCo
                 disabled={foundCP}
               />
             </Grid>
+            {optionSelected === ADDRESS_OPTION && suburbsZero() && (
+              <Grid item sm={6}>
+                {renderPostalCode()}
+              </Grid>
+            )}
           </Grid>
           <Grid container>
             <Grid item sm={12} textAlign="right">

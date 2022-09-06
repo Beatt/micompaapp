@@ -8,8 +8,7 @@ const Home = () => {
       <Typography variant="h1">¡Bienvenido!</Typography>
       <Box mb={2}>
         <Typography variant="p">
-          Buscar tu dirección es muy fácil con nuestra aplicación, solo ingresa tu código postal y veamos si se
-          encuentra en nuestra API.
+          Agregar tu dirección es muy fácil con nuestra aplicación, solo ingresa la información con la que cuentes
         </Typography>
       </Box>
       <AddressesCreate />
