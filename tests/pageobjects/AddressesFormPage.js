@@ -1,5 +1,5 @@
 import { act } from "react-dom/test-utils"
-import { fireEvent, screen } from "@testing-library/react"
+import { fireEvent, screen, waitFor } from "@testing-library/react"
 import addresses from "../factories/addresses"
 
 class AddressesFormPage {
@@ -39,6 +39,28 @@ class AddressesFormPage {
     fireEvent.change(screen.getByTestId("municipality").querySelector("input"), { target: { value } })
   }
 
+  static selectPostalCodeOption() {
+    fireEvent.click(screen.getByTestId("postalCodeOption").querySelector("input"))
+  }
+
+  static selectAddressOption() {
+    fireEvent.click(screen.getByTestId("addressOption").querySelector("input"))
+  }
+
+  static async fillAddressOptionField(value) {
+    await waitFor(() => {
+      fireEvent.change(screen.getByTestId("addressOptionField").querySelector("input"), { target: { value } })
+    })
+  }
+
+  static async fillAddressOptionFieldWithoutPostalCode(value) {
+    await waitFor(() => {
+      fireEvent.change(screen.getByTestId("addressOptionFieldWithoutPostalCode").querySelector("input"), {
+        target: { value },
+      })
+    })
+  }
+
   static async searchMyAddress() {
     await act(() => {
       fireEvent.click(screen.getByText("Buscar mi dirección"))
@@ -54,6 +76,7 @@ class AddressesFormPage {
   static async fillRandomAddress() {
     const address = addresses.build()
 
+    AddressesFormPage.selectPostalCodeOption()
     AddressesFormPage.fillCP(address.cp)
     await AddressesFormPage.searchMyAddress()
 

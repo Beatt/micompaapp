@@ -5,16 +5,20 @@ import { catalogsPostalCode, catalogsSuburbsByPostalCode } from "../../../api/ca
 import { SnackbarProvider } from "notistack"
 import AddressesFormPage from "../../../../tests/pageobjects/AddressesFormPage"
 
+jest.mock("../../../components/Autocomplete")
+
 describe("AddressesForm", function () {
-  let props = {
-    catalogsPostalCode,
-    catalogsSuburbsByPostalCode,
-    onSubmit: jest.fn(),
-    initValues: undefined,
-  }
+  let props
 
   let createWrapper
   beforeEach(() => {
+    props = {
+      catalogsPostalCode,
+      catalogsSuburbsByPostalCode,
+      onSubmit: jest.fn(),
+      initValues: undefined,
+    }
+
     jest.spyOn(props, "catalogsSuburbsByPostalCode").mockResolvedValue({
       data: [
         { name: "Minerva" },
@@ -41,116 +45,175 @@ describe("AddressesForm", function () {
       )
   })
 
-  it("create address when cp was found", async () => {
-    createWrapper()
+  describe("when postal code option is selected", function () {
+    it("create address when cp was found", async () => {
+      createWrapper()
 
-    AddressesFormPage.fillCP("14030")
-    await AddressesFormPage.searchMyAddress()
+      AddressesFormPage.selectPostalCodeOption()
+      AddressesFormPage.fillCP("14030")
+      await AddressesFormPage.searchMyAddress()
 
-    AddressesFormPage.fillStreet("3a poniente 19")
-    AddressesFormPage.fillInteriorNumber("7")
-    AddressesFormPage.fillOutdoorNumber("18")
-    AddressesFormPage.fillSuburb("Los Cipreses")
+      AddressesFormPage.fillStreet("3a poniente 19")
+      AddressesFormPage.fillInteriorNumber("7")
+      AddressesFormPage.fillOutdoorNumber("18")
+      AddressesFormPage.fillSuburb("Los Cipreses")
 
-    await AddressesFormPage.submit()
+      await AddressesFormPage.submit()
 
-    expect(props.onSubmit).toBeCalledWith({
-      cp: "14030",
-      municipality: "Tlalpan",
-      state: "Ciudad de México",
-      country: "México",
-      street: "3a poniente 19",
-      interior_number: "7",
-      outdoor_number: "18",
-      suburb: "Los Cipreses",
-      city: "CDMX",
+      expect(props.onSubmit).toBeCalledWith({
+        cp: "14030",
+        municipality: "Tlalpan",
+        state: "Ciudad de México",
+        country: "México",
+        street: "3a poniente 19",
+        interior_number: "7",
+        outdoor_number: "18",
+        suburb: "Los Cipreses",
+        city: "CDMX",
+      })
+      expect(screen.getByTestId("country").querySelector("input").disabled).toBeTruthy()
+      expect(screen.getByTestId("state").querySelector("input").disabled).toBeTruthy()
+      expect(screen.getByTestId("city").querySelector("input").disabled).toBeTruthy()
+      expect(document.body.textContent).toEqual(expect.stringMatching("¡Se ha guardado correctamente tu dirección!"))
     })
-    expect(screen.getByTestId("country").querySelector("input").disabled).toBeTruthy()
-    expect(screen.getByTestId("state").querySelector("input").disabled).toBeTruthy()
-    expect(screen.getByTestId("municipality").querySelector("input").disabled).toBeTruthy()
-    expect(screen.getByTestId("city").querySelector("input").disabled).toBeTruthy()
-    expect(document.body.textContent).toEqual(expect.stringMatching("¡Se ha guardado correctamente tu dirección!"))
-  })
 
-  it("create address when cp was not found", async () => {
-    jest.spyOn(props, "catalogsPostalCode").mockRejectedValue({})
+    it("create address when cp was not found", async () => {
+      jest.spyOn(props, "catalogsPostalCode").mockRejectedValue({})
 
-    createWrapper()
+      createWrapper()
 
-    AddressesFormPage.fillCP("14030")
-    await AddressesFormPage.searchMyAddress()
+      AddressesFormPage.selectPostalCodeOption()
+      AddressesFormPage.fillCP("14030")
+      await AddressesFormPage.searchMyAddress()
 
-    AddressesFormPage.fillStreet("3a poniente 19")
-    AddressesFormPage.fillInteriorNumber("7")
-    AddressesFormPage.fillOutdoorNumber("18")
-    AddressesFormPage.fillSuburb("Mi colonia")
-    AddressesFormPage.fillCity("CDMX")
-    AddressesFormPage.fillCountry("México")
-    AddressesFormPage.fillEstado("Ciudad de México")
-    AddressesFormPage.fillMunicipioAlcaldia("Tlalpan")
+      AddressesFormPage.fillStreet("3a poniente 19")
+      AddressesFormPage.fillInteriorNumber("7")
+      AddressesFormPage.fillOutdoorNumber("18")
+      AddressesFormPage.fillSuburb("Mi colonia")
+      AddressesFormPage.fillCity("CDMX")
+      AddressesFormPage.fillCountry("México")
+      AddressesFormPage.fillEstado("Ciudad de México")
+      AddressesFormPage.fillMunicipioAlcaldia("Tlalpan")
 
-    await AddressesFormPage.submit()
+      await AddressesFormPage.submit()
 
-    expect(props.onSubmit).toBeCalledWith({
-      cp: "14030",
-      municipality: "Tlalpan",
-      state: "Ciudad de México",
-      country: "México",
-      street: "3a poniente 19",
-      interior_number: "7",
-      outdoor_number: "18",
-      suburb: "Mi colonia",
-      city: "CDMX",
+      expect(props.onSubmit).toBeCalledWith({
+        cp: "14030",
+        municipality: "Tlalpan",
+        state: "Ciudad de México",
+        country: "México",
+        street: "3a poniente 19",
+        interior_number: "7",
+        outdoor_number: "18",
+        suburb: "Mi colonia",
+        city: "CDMX",
+      })
+      expect(screen.getByTestId("country").querySelector("input").disabled).toBeFalsy()
+      expect(screen.getByTestId("state").querySelector("input").disabled).toBeFalsy()
+      expect(screen.getByTestId("municipality").querySelector("input").disabled).toBeFalsy()
+      expect(screen.getByTestId("city").querySelector("input").disabled).toBeFalsy()
+      expect(document.body.textContent).toEqual(expect.stringMatching("¡Se ha guardado correctamente tu dirección!"))
     })
-    expect(screen.getByTestId("country").querySelector("input").disabled).toBeFalsy()
-    expect(screen.getByTestId("state").querySelector("input").disabled).toBeFalsy()
-    expect(screen.getByTestId("municipality").querySelector("input").disabled).toBeFalsy()
-    expect(screen.getByTestId("city").querySelector("input").disabled).toBeFalsy()
-    expect(document.body.textContent).toEqual(expect.stringMatching("¡Se ha guardado correctamente tu dirección!"))
+
+    it("show error message when create address fail", async () => {
+      jest.spyOn(props, "onSubmit").mockRejectedValue()
+
+      createWrapper()
+
+      await AddressesFormPage.fillRandomAddress()
+
+      await AddressesFormPage.submit()
+
+      expect(document.body.textContent).toEqual(
+        expect.stringMatching("¡Lo sentimos, ha ocurrido un error al guardar tu dirección!")
+      )
+    })
+
+    it("edit address", async () => {
+      props.initValues = {
+        cp: "14030",
+        street: "3a poniente 19",
+        interior_number: "7",
+        outdoor_number: "18",
+        suburb: "Los Cipreses",
+      }
+
+      createWrapper()
+
+      AddressesFormPage.selectPostalCodeOption()
+      AddressesFormPage.fillCP("14030")
+      await AddressesFormPage.searchMyAddress()
+
+      AddressesFormPage.fillStreet("6a poniente 20")
+
+      await AddressesFormPage.submit()
+
+      expect(props.onSubmit).toBeCalledWith({
+        municipality: "Tlalpan",
+        state: "Ciudad de México",
+        country: "México",
+        cp: "14030",
+        street: "6a poniente 20",
+        interior_number: "7",
+        outdoor_number: "18",
+        suburb: "Los Cipreses",
+        city: "CDMX",
+      })
+    })
   })
 
-  it("show error message when create address fail", async () => {
-    jest.spyOn(props, "onSubmit").mockRejectedValue()
+  describe("when address option is selected", function () {
+    it("create address if the autocomplete is ok", async () => {
+      createWrapper()
 
-    createWrapper()
+      AddressesFormPage.selectAddressOption()
+      await AddressesFormPage.fillAddressOptionField("3a poniente")
 
-    await AddressesFormPage.fillRandomAddress()
+      AddressesFormPage.fillMunicipioAlcaldia("Ciudad de México")
+      AddressesFormPage.fillSuburb("Los Cipreses")
 
-    await AddressesFormPage.submit()
+      await AddressesFormPage.submit()
 
-    expect(document.body.textContent).toEqual(
-      expect.stringMatching("¡Lo sentimos, ha ocurrido un error al guardar tu dirección!")
-    )
-  })
+      expect(props.onSubmit).toBeCalledWith({
+        cp: "14030",
+        municipality: "Ciudad de México",
+        state: "Ciudad de México",
+        country: "México",
+        street: "Calle 3 Poniente",
+        interior_number: "",
+        outdoor_number: "7",
+        suburb: "Los Cipreses",
+        city: "Ciudad de México",
+      })
 
-  it("edit address", async () => {
-    props.initValues = {
-      cp: "14030",
-      street: "3a poniente 19",
-      interior_number: "7",
-      outdoor_number: "18",
-      suburb: "Los Cipreses",
-    }
+      expect(document.body.textContent).toEqual(expect.stringMatching("¡Se ha guardado correctamente tu dirección!"))
+    })
 
-    createWrapper()
+    it("create address if the postal code not exist", async () => {
+      createWrapper()
 
-    AddressesFormPage.fillCP("14030")
-    await AddressesFormPage.searchMyAddress()
+      AddressesFormPage.selectAddressOption()
+      await AddressesFormPage.fillAddressOptionFieldWithoutPostalCode("3a poniente")
 
-    AddressesFormPage.fillStreet("6a poniente 20")
+      AddressesFormPage.fillMunicipioAlcaldia("Ciudad de México")
+      AddressesFormPage.fillSuburb("Isidro fabela")
+      AddressesFormPage.fillCP("14030")
 
-    await AddressesFormPage.submit()
+      await AddressesFormPage.submit()
 
-    expect(props.onSubmit).toBeCalledWith({
-      municipality: "Tlalpan",
-      state: "Ciudad de México",
-      country: "México",
-      cp: "14030",
-      street: "6a poniente 20",
-      interior_number: "7",
-      outdoor_number: "18",
-      suburb: "Los Cipreses",
-      city: "CDMX",
+      expect(props.onSubmit).toBeCalledWith({
+        cp: "14030",
+        municipality: "Ciudad de México",
+        state: "Ciudad de México",
+        country: "México",
+        street: "Calle 3 Poniente",
+        interior_number: "",
+        outdoor_number: "7",
+        suburb: "Isidro fabela",
+        city: "Ciudad de México",
+      })
+
+      expect(document.body.textContent).toEqual(expect.stringMatching("¡Se ha guardado correctamente tu dirección!"))
     })
   })
 })
